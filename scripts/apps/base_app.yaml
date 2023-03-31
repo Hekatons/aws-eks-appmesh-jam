@@ -1,0 +1,133 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: roaster
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: roaster
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: roaster
+        version: v1
+    spec:
+      containers:
+        - name: roaster
+          image: "672518094988.dkr.ecr.us-west-2.amazonaws.com/hello-world:v1.0"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9080
+          env:
+            - name: "HW_RESPONSE"
+              value: "Roaster is Ready!"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: robusta-v1
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: robusta
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: robusta
+        version: v1
+    spec:
+      containers:
+        - name: robusta
+          image: "672518094988.dkr.ecr.us-west-2.amazonaws.com/hello-world:v1.0"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9080
+          env:
+            - name: "HW_RESPONSE"
+              value: "[\"Vietnam\",\"Indonesia\"]"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arabica-v1
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arabica
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: arabica
+        version: v1
+    spec:
+      containers:
+        - name: arabica
+          image: "672518094988.dkr.ecr.us-west-2.amazonaws.com/hello-world:v1.0"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9080
+          env:
+            - name: "HW_RESPONSE"
+              value: "[\"Brazil\",\"Ethiopia\"]"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: roaster
+  namespace: prod
+  labels:
+    app: roaster
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: roaster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: robusta-v1
+  namespace: prod
+  labels:
+    app: robusta
+    version: v1
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: robusta
+    version: v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arabica-v1
+  namespace: prod
+  labels:
+    app: arabica
+    version: v1
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: arabica
+    version: v1
+---
